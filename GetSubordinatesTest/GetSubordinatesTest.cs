@@ -28,6 +28,7 @@ namespace GetSubordinatesTest
         public void ValidateFile_Deserialisation(string fileName, bool canDeserialise)
         {
             var basePath = AppDomain.CurrentDomain.BaseDirectory;
+            basePath = Path.Combine(basePath, "Resources");
             var path = Path.Combine(basePath, fileName);
 
             var manager = new UserRoleManager();
