@@ -3,7 +3,7 @@ using System;
 using System.IO;
 using System.Linq;
 
-namespace Employees
+namespace GetSubordinates
 {
     class Program
     {
@@ -48,6 +48,7 @@ namespace Employees
 
                         // Return SubOrdinates
                         Console.WriteLine($"Found {result.Count} subordinates: {string.Join(", ", ids)}");
+                        Console.WriteLine(JsonConvert.SerializeObject(result));
                         Console.WriteLine($"Writing result to file '{output}'.");
                         using (StreamWriter file = File.CreateText(outputPath))
                         {

@@ -4,9 +4,9 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 
-namespace Employees
+namespace GetSubordinates
 {
-    class UserRoleManager {
+    public class UserRoleManager {
         public UserRole UserRoles = new UserRole();
         public List<User> Users { get => UserRoles.Users; }
         public List<Role> Roles { get => UserRoles.Roles; }
@@ -15,7 +15,7 @@ namespace Employees
 
         public bool LoadUserRoleFromFile(string path, ref string errorMessage)
         {
-            // File validation
+            // Validate file
 
             if (!File.Exists(path))
             {
@@ -37,7 +37,12 @@ namespace Employees
                 }
             }
 
-            // Input data validation
+            return BuildUserRole(ref errorMessage);
+        }
+
+        public bool BuildUserRole(ref string errorMessage)
+        {
+            // Validate input
 
             if (Users.Count == 0 || Users.Any(x => x.Id == int.MinValue || string.IsNullOrEmpty(x.Name) || x.Role == int.MinValue) ||
                 Roles.Count == 0 || Roles.Any(x => x.Id == int.MinValue || string.IsNullOrEmpty(x.Name) || x.Parent == int.MinValue))
@@ -46,29 +51,27 @@ namespace Employees
                 return false;
             }
 
-            var idDuplicates = Users?.GroupBy(x => x.Id)
+            var idDuplicates = Users.GroupBy(x => x.Id)
               .Where(g => g.Count() > 1)
               .Select(y => y.Key)
               .ToList();
-            if (idDuplicates?.Count > 0)
+            if (idDuplicates.Count > 0)
             {
                 errorMessage = $"Multiple users with ID(s) were found: {string.Join(",", idDuplicates)}.";
                 return false;
             }
 
-            idDuplicates = Roles?.GroupBy(x => x.Id)
+            idDuplicates = Roles.GroupBy(x => x.Id)
               .Where(g => g.Count() > 1)
               .Select(y => y.Key)
               .ToList();
-            if (idDuplicates?.Count > 0)
+            if (idDuplicates.Count > 0)
             {
                 errorMessage = $"Multiple roles with ID(s) were found: {string.Join(",", idDuplicates)}.";
                 return false;
             }
 
-            // End of input data validation
-
-            // Initialise role structure
+            // Process input
             BuildRoleHierarchy();
             return true;
         }
@@ -97,7 +100,7 @@ namespace Employees
 
         public List<User> GetSubOrdinates(int id)
         {
-            var user = Users?.FirstOrDefault(u => u.Id == id);
+            var user = Users.FirstOrDefault(u => u.Id == id);
             if (user == null) return null;
 
             var subRoleIDs = GetSubRoleIDs(user.Role);
@@ -106,7 +109,7 @@ namespace Employees
             return Users.Where(x => subRoleIDs.Contains(x.Role)).ToList();
         }
 
-        public List<int> GetSubRoleIDs(int parentId)
+        private List<int> GetSubRoleIDs(int parentId)
         {
             // Get cached result from previous searches if available
             if (SubRoleIDCache.ContainsKey(parentId))
@@ -151,20 +154,20 @@ namespace Employees
         }
     }
 
-    class UserRole
+    public class UserRole
     {
         public List<User> Users = new List<User>();
         public List<Role> Roles = new List<Role>();
     }
 
-    class User
+    public class User
     {
         public int Id = int.MinValue;
         public string Name;
         public int Role = int.MinValue;
     }
 
-    class Role
+    public class Role
     {
         public int Id = int.MinValue;
         public string Name;
