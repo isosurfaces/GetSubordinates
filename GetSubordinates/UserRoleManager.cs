@@ -134,12 +134,12 @@ namespace GetSubordinates
             {
                 // Get cached result from previous searches if available
                 var parentsCached = SubRoleIDCache.Where(x => parentIDs.Contains(x.Key));
-                var childrenIDsCached = parentsCached.SelectMany(x => x.Value).ToList();
+                var childrenIDsCached = parentsCached.SelectMany(x => x.Value).Except(result).ToList();
 
                 // Compile uncached result from RoleHierarchy child-parent relationships
                 parentIDs = parentIDs.Except(parentsCached.Select(x => x.Key)).ToList();
                 var parentsUnCached = RoleHierarchy.Where(x => parentIDs.Contains(x.Key));
-                var childrenIDsUnCached = parentsUnCached.SelectMany(x => x.Value);
+                var childrenIDsUnCached = parentsUnCached.SelectMany(x => x.Value).Except(result).ToList();
 
                 result.AddRange(childrenIDsCached.Union(childrenIDsUnCached));
 
