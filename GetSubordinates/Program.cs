@@ -9,7 +9,7 @@ namespace GetSubordinates
     {
         static void Main(string[] args) {
             var currentWD = AppDomain.CurrentDomain.BaseDirectory;
-            var fileName = "Resources/userHeirarchy.json";
+            var fileName = Path.Combine("Resources", "userHeirarchy.json");
             var output = "subordinates.json";
             var defaultPath = Path.Combine(currentWD, fileName);
             var outputPath = Path.Combine(currentWD, output);

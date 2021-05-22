@@ -14,7 +14,7 @@ This is a Visual Studio c# solution. It builds a console app to read user-heirar
 
 When you launch GetSubordinates.exe, it will asks you for a user-heirarchy json file. You can simply press enter to load the default json file.
 
-The default json file is named "userHeirarchy.json" and placed in the folder already. You can either edit or replace this file with another file with the same name, or you may provide a path to another file when prompted.
+The default json file is named "userHeirarchy.json" and placed in the Resources folder already. You can either edit or replace this file with another file with the same name, or you may provide a path to another file when prompted.
 
 ```
 C:\SamplePath\SampleFile.json
