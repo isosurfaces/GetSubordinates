@@ -12,6 +12,8 @@ This is a Visual Studio c# solution. It builds a console app to read user-heirar
 
 4. The result will also be saved as subordinates.json in the executable folder.
 
+5. In debug mode, call GetSubOrdinates(id) from an instance of UserRoleManager.
+
 ### Prerequisites
 
 When you launch GetSubordinates.exe, it will asks you for a user-heirarchy json file. You can simply press enter to load the default json file.
@@ -22,7 +24,7 @@ The default file is named "userHeirarchy.json" and placed in the Resources folde
 E.g. C:\SamplePath\SampleFile.json
 ```
 
-The console app will display error messages if the input file contains no users, or no roles, or any user or role fields are missing.
+The console will return an error messages if the input file contains no users, or no roles, or any user or role fields are missing.
 
 ## Running the tests
 

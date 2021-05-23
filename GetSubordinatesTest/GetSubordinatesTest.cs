@@ -122,6 +122,29 @@ namespace GetSubordinatesTest
             }
         }
 
+        [TestMethod, Timeout(2000)]
+        public void ValidateInput_InfiniteLoop_ShouldNotTimeout()
+        {
+            // This test should not timeout
+
+            // These roles form an infinite loop
+            var input = new UserRole();
+            input.Roles.Add(new Role() { Id = 1, Name = "System Administrator", Parent = 3 });
+            input.Roles.Add(new Role() { Id = 2, Name = "Location Manager", Parent = 1 });
+            input.Roles.Add(new Role() { Id = 3, Name = "Supervisor", Parent = 2 });
+
+            input.Users.Add(new User() { Id = 1, Name = "Adam Admin", Role = 1 });
+            input.Users.Add(new User() { Id = 2, Name = "Emily Employee", Role = 2 });
+            input.Users.Add(new User() { Id = 3, Name = "Sam Supervisor", Role = 3 });
+
+            string message = null;
+            UserRoleManager manager = new UserRoleManager();
+            manager.UserRoles = input;
+            manager.BuildUserRole(ref message);
+
+            manager.GetSubOrdinates(2);
+        }
+
         [TestMethod]
         [DataRow(1, 4)]
         [DataRow(2, 0)]
@@ -170,6 +193,48 @@ namespace GetSubordinatesTest
                     Assert.IsTrue(result.Any(x => x.Id == 5));
                     break;
             }
+        }
+
+        [TestMethod]
+        public void GetSubordinatesFromID_Multi()
+        {
+            var input = new UserRole();
+            input.Roles.Add(new Role() { Id = 1, Name = "System Administrator", Parent = 0 });
+
+            input.Roles.Add(new Role() { Id = 2, Name = "Location Manager", Parent = 1 });
+            input.Roles.Add(new Role() { Id = 3, Name = "Supervisor", Parent = 1 });
+
+            input.Roles.Add(new Role() { Id = 4, Name = "Employee", Parent = 2 });
+            input.Roles.Add(new Role() { Id = 5, Name = "Trainer", Parent = 2 });
+
+            input.Roles.Add(new Role() { Id = 6, Name = "Intern", Parent = 3 });
+            input.Roles.Add(new Role() { Id = 7, Name = "Contractor", Parent = 3 });
+            input.Roles.Add(new Role() { Id = 8, Name = "Apprentice", Parent = 3 });
+
+            input.Users.Add(new User() { Id = 1, Name = "Adam Admin", Role = 1 });
+            
+            input.Users.Add(new User() { Id = 2, Name = "Emily Employee", Role = 2 });
+            input.Users.Add(new User() { Id = 3, Name = "Sam Supervisor", Role = 3 });
+            
+            input.Users.Add(new User() { Id = 4, Name = "Mary Manager", Role = 4 });
+            input.Users.Add(new User() { Id = 5, Name = "Steve Trainer", Role = 5 });
+
+            input.Users.Add(new User() { Id = 6, Name = "Ivy Intern", Role = 6 });
+            input.Users.Add(new User() { Id = 7, Name = "Chris Contractor", Role = 7 });
+            input.Users.Add(new User() { Id = 8, Name = "Alice Apprentice", Role = 8 });
+            input.Users.Add(new User() { Id = 9, Name = "Allen Apprentice", Role = 8 });
+
+            string message = null;
+            UserRoleManager manager = new UserRoleManager();
+            manager.UserRoles = input;
+            manager.BuildUserRole(ref message);
+            Assert.IsTrue(string.IsNullOrEmpty(message));
+
+            var result = manager.GetSubOrdinates(1);
+            Assert.AreEqual(8, result.Count, "should have found all 8 subordinates");
+
+            result = manager.GetSubOrdinates(3);
+            Assert.AreEqual(4, result.Count, "should have found all 4 subordinates");
         }
     }
 }
